@@ -1,0 +1,24 @@
+Package: blblm
+Type: Package
+Title: Bag of Little Bootstrap for Regression Models
+Version: 0.1.0
+Author: Chushing Lai, Yuhong Fang
+Maintainer: <fyhfang@ucdavis.edu>
+Description: Use the bag of little bootstrap algorithm to fit linear regression model and GLM and return coeficeients and sigmas of the model.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown
+Imports: 
+    purrr,
+    stats,
+    magrittr,
+    furrr,
+    readr,
+    utils
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+VignetteBuilder: knitr

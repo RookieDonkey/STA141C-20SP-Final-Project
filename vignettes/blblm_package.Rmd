@@ -1,0 +1,63 @@
+---
+title: "Introduction to BLBLM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{blblm_package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The main idea of this package is to let users easily do the bag of little bootstrap with linear regression models and generalized linear models. The package will do the little bootstrap to the data first and then calculate the coefficient and sigma for each subsample depends on the model formula. Then return the mean coefficients and mean sigma as the final output for the data and model.
+
+- This package exports two fitting regression model functions and four rewrote functions:
+  - `blblm()`  Bag of Little Bootstrap for Linear Regression Model
+  - `blbglm()` Bag of Little Bootstrap for Generalized Regression Model
+  - `coef()`   Calculate the mean coefficients for all subsamples
+  - `confint()`Calculate the confidence interval of coefficients
+  - `sigma()`  Calculate the mean sigma for all subsamples, also provide confidence interval for sigmas
+  - `predict()`Predict values for new_data by given model, also provide confidence interval for values
+
+#Regression Functions
+lm() and glm() functions from {stats} package are used in this package as the basic regression function. The coefficients and sigmas for each subsamples are calculated by these two functions.
+
+# Weighted Least Squares
+To reflect the behavior of the random errors in the model, weighted least squares are used here. The weights are randomly chose following multinomial distribution from 1 to the number of rows of the subsample.
+
+# Bag of Little Bootstrap
+Bag of Little Bootstrap is a procedure which incorporates features of both the bootstrap and subsampling to yield a robust, computationally efficient means of assessing the quality of estimators. It is efficiency and provide trustable results. 
+For user friendly, input a splited data list is available. Data will not be splitted any more and will be used to calculate the mean coefficients and sigmas directly.
+
+# Confidence Interval
+For each subsample, coefficient and sigma are calculated. Mean of the coefficients and sigmas will be the output for the formula under the data. Also, the confidence intervals are provided by given confidence level.
+
+```{r}
+library(blblm)
+```
+```{r, warning = FALSE}
+fitlm <- blblm(mpg ~ wt * hp, data = mtcars, m = 2, B = 100)
+coef(fitlm)
+confint(fitlm, c("wt", "hp"))
+sigma(fitlm)
+sigma(fitlm, confidence = TRUE)
+predict(fitlm, data.frame(wt = c(2.5, 3), hp = c(150, 170)))
+predict(fitlm, data.frame(wt = c(2.5, 3), hp = c(150, 170)), confidence = TRUE)
+fitglm <- blbglm((as.integer(Species)-1) ~ Sepal.Length * Sepal.Width, data = iris[1:100,], m = 3, B = 100, family = binomial) 
+coef(fitglm)
+confint.blblm(fitglm, c("Sepal.Length", "Sepal.Width"))
+sigma(fitglm)
+sigma(fitglm, confidence = TRUE)
+predict.blblm(fitglm, data.frame(Sepal.Length = c(5.5, 5.1), Sepal.Width = c(2.3, 3.5)))
+predict.blblm(fitglm, data.frame(Sepal.Length = c(5.5, 5.1), Sepal.Width = c(2.3, 3.5)), confidence = TRUE)
+```
+
+
+
+
+
